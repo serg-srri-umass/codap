@@ -569,7 +569,7 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
   /**
     Saves the current state of the current game into the 'savedGameState'
     property of the current game's context. Uses the 'doCommandFunc' property
-    passed by the gamae as part of the 'initGame' command.
+    passed by the game as part of the 'initGame' command.
    */
   saveCurrentGameState: function() {
     var gameSpec = this.get('currentGame'),
