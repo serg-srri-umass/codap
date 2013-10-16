@@ -698,8 +698,8 @@ DG.GraphModel = SC.Object.extend( DG.Destroyable,
      */
     getGearMenuItems: function() {
       var this_ = this,
-        tPlot = this.get( 'plot' ),
-        kIsForSubmenu = true;
+        tPlot = this.get( 'plot' );
+        //kIsForSubmenu = true;
       if( SC.none( tPlot ) )  // Can happen if we can't handle a particular configuration
         return [];
 
@@ -717,7 +717,11 @@ DG.GraphModel = SC.Object.extend( DG.Destroyable,
         ];
       };
 
-      return tPlot.getGearMenuItems().concat(getGraphMenuItems())
+      return tPlot.getGearMenuItems(). // plot specific menu items
+          concat( getGraphMenuItems()). // then menu items for all plots...
+          concat( [{ isSeparator: YES }]).
+          concat( this.createHideShowAttributeSubMenuItems());
+        /*  remove submenus --CDM 2013-09-24, flatted gear menu is much easier to use.
         .concat(
           [
             { isSeparator: YES },
@@ -728,6 +732,7 @@ DG.GraphModel = SC.Object.extend( DG.Destroyable,
             ]},
             { title: 'DG.GraphMenu.hide'.loc(), subMenu: this.createHideShowAttributeSubMenuItems() }
           ] );
+        */
     },
 
     /** Submenu items for hiding selected or unselected cases, or showing all cases */
