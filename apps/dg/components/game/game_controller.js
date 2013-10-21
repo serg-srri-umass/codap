@@ -84,13 +84,14 @@ DG.GameController = DG.ComponentController.extend(
     @returns  {Array of Number}   Array of open case IDs
    */
   getOpenCaseIDs: function( iExcludeChildren ) {
-    var openCaseIDs = [];
+    var openCaseIDs = [],
+        includeChildCases = (iExcludeChildren ? false : true);
     
     // Adds the id of the specified case and all of its child cases to openCaseIDs.
     function addCase( iCase) {
       openCaseIDs.push( iCase.get('id'));
 
-      if( ! iExcludeChildren ) {
+      if( includeChildCases ) {
         var childCases = iCase.get('children');
         childCases.forEach( function( iChildCase) { addCase( iChildCase); });
       }
@@ -526,7 +527,7 @@ DG.GameController = DG.ComponentController.extend(
       DG.logUser("deleteAllCaseData by Game");  // deleted via Game API, not via Delete Data button.
       var preserveAllGameCasesOption = iArgs && iArgs.preserveAllGames,
           preserveOpenEventCasesOption = iArgs && iArgs.preserveOpenEvents;
-      return this.doDeleteAllCaseData( preserveAllGameCasesOption, preserveOpenEventCasesOption );
+      return this.doDeleteAllCaseData( preserveAllGameCasesOption, ! preserveOpenEventCasesOption );
    },
 
   /**
@@ -536,9 +537,11 @@ DG.GameController = DG.ComponentController.extend(
    @param deleleteOpenEventCases {Boolean} (optional) also delete open event cases, which by default are preserved.
    @returns {{success: boolean}}
    */
-  doDeleteAllCaseData: function( preserveTopCasesOption, deleleteOpenEventCases ) {
+  doDeleteAllCaseData: function( preserveTopCasesOption, deleteOpenEventCases ) {
+    preserveTopCasesOption = preserveTopCasesOption || false;
+    deleteOpenEventCases = deleteOpenEventCases || false;
     var dataContext = DG.gameSelectionController.get('currentContext'),
-        tCaseIDsToPreserve = this.getOpenCaseIDs( deleleteOpenEventCases ), // don't delete the open cases (parent or child)
+        tCaseIDsToPreserve = this.getOpenCaseIDs( deleteOpenEventCases ), // don't delete the open cases (parent or child)
         tGameCollection = null,
         tDeletedCaseIDs = null;
 
