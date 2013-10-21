@@ -79,18 +79,21 @@ DG.GameController = DG.ComponentController.extend(
   },
   
   /**
-    Returns the IDs of any currently open game cases.
+    Returns the IDs of any currently open game cases, plus the child cases of those cases.
+    @param iExcludeChildren {Boolean} optional parameter to not include child cases of open game cases.
     @returns  {Array of Number}   Array of open case IDs
    */
-  getOpenCaseIDs: function() {
+  getOpenCaseIDs: function( iExcludeChildren ) {
     var openCaseIDs = [];
     
     // Adds the id of the specified case and all of its child cases to openCaseIDs.
     function addCase( iCase) {
       openCaseIDs.push( iCase.get('id'));
 
-      var childCases = iCase.get('children');
-      childCases.forEach( function( iChildCase) { addCase( iChildCase); });
+      if( ! iExcludeChildren ) {
+        var childCases = iCase.get('children');
+        childCases.forEach( function( iChildCase) { addCase( iChildCase); });
+      }
     }
     
     // New Game API support -- Add open parent cases, child cases, and their values
@@ -130,6 +133,7 @@ DG.GameController = DG.ComponentController.extend(
       catch(e) {
         // TODO: Report invalid JSON back to caller
         DG.logWarn("Invalid JSON in doCommand(), reported from DG.GameController.dispatchCommand()");
+        DG.log( "JSON: "+iCmd );
       }
     }
     
@@ -520,19 +524,21 @@ DG.GameController = DG.ComponentController.extend(
    */
   handleDeleteAllCaseData: function( iArgs) {
       DG.logUser("deleteAllCaseData by Game");  // deleted via Game API, not via Delete Data button.
-      var preserveGameCasesOption = iArgs && iArgs.preserveGameCollectionCases;
-      return this.doDeleteAllCaseData( preserveGameCasesOption );
+      var preserveAllGameCasesOption = iArgs && iArgs.preserveAllGames,
+          preserveOpenEventCasesOption = iArgs && iArgs.preserveOpenEvents;
+      return this.doDeleteAllCaseData( preserveAllGameCasesOption, preserveOpenEventCasesOption );
    },
 
   /**
    Delete all case data (except data linked to the currently open game case).
    Design for use by user (DG.AppController.deleteAllCaseData()) or by game (this.handleDeleteAllCaseData())
-   @param {Boolean} preserveTopCasesOption (optional) prevent delete of all top level cases (delete child cases only)
+   @param preserveTopCasesOption {Boolean} (optional) prevent delete of all top level cases (delete child cases only)
+   @param deleleteOpenEventCases {Boolean} (optional) also delete open event cases, which by default are preserved.
    @returns {{success: boolean}}
    */
-  doDeleteAllCaseData: function( preserveTopCasesOption ) {
+  doDeleteAllCaseData: function( preserveTopCasesOption, deleleteOpenEventCases ) {
     var dataContext = DG.gameSelectionController.get('currentContext'),
-        tCaseIDsToPreserve = this.getOpenCaseIDs(), // don't delete the open cases (parent or child)
+        tCaseIDsToPreserve = this.getOpenCaseIDs( deleleteOpenEventCases ), // don't delete the open cases (parent or child)
         tGameCollection = null,
         tDeletedCaseIDs = null;
 
