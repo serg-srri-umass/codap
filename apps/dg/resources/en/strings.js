@@ -52,7 +52,7 @@ SC.stringsFor('English', {
   'DG.mainPage.mainPane.versionString.IS_BUILD' : "Version %@ (%@ IS)", // Add suffix to version to identify SRRI's subsequent modifications .srri0, .srri1, .srri2 etc.
 
   // DG.IS_SRRI_BUILD variants of strings for SRRI build
-  'DG.mainPage.mainPane.versionString.SRRI_BUILD' : "Version %@ (%@.srri8)", // Add suffix to version to identify SRRI's subsequent modifications .srri0, .srri1, .srri2 etc.
+  'DG.mainPage.mainPane.versionString.SRRI_BUILD' : "Version %@ (%@.srri9)", // Add suffix to version to identify SRRI's subsequent modifications .srri0, .srri1, .srri2 etc.
   'DG.Authorization.loginPane.registerLink.SRRI_BUILD' : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/register'>Create a new account</a>",
   'DG.Authorization.loginPane.recoveryLink.SRRI_BUILD' : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/password'>Forgot your password?</a>",
 
