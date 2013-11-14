@@ -27,7 +27,7 @@ DG.PlotUtilities = {
   kZeroLineWidth: 1,
   kDefaultMovableLineColor: "steelblue",
   kLineHighlightColor: "rgba(255, 0, 0, 0.3)",
-  kPlotCellFill: 'rgba(128, 128, 128, 0)', // was kBandColor
+  kPlotCellFill: 'rgba(128, 128, 128, 0)', // transparent
   kPlotCellStroke: '#eee',
   kStrokeDarkerFactor: 3,
   kPointRadiusLogBase: 2.0, // reduce point radius from max by log of (num. cases) base (LogBase).
