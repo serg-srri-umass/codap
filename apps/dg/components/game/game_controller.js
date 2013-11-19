@@ -343,9 +343,17 @@ DG.GameController = DG.ComponentController.extend(
       // game until it has finished restoring its state.
       var currentContext = currentGame.get('context'),
           restoredGameState = currentContext && currentContext.get('restoredGameState'),
-          doAppCommandFunc = currentGame.get('doCommandFunc');
-      if( doAppCommandFunc && restoredGameState) {
-        doAppCommandFunc({ operation: 'restoreState', args: { state: restoredGameState }});
+          restoreCommand = { operation: 'restoreState', args: { state: restoredGameState }},
+          doAppCommandFunc = currentGame.get('doCommandFunc'),
+          gameElement = DG.gameSelectionController.findCurrentGameElement( currentGame.get('gameEmbedID'));
+      if( restoredGameState ) {
+        if( doAppCommandFunc ) {
+          // for javascript games we can call the games 'doCommandFunc' directly
+          doAppCommandFunc( restoreCommand );
+        } else if( gameElement && gameElement.doCommandFunc ) {
+          // for flash games we must find the embedded swf object, then call its 'doCommandFunc'
+          gameElement.doCommandFunc( SC.json.encode( restoreCommand ));
+        }
       }
     }
 

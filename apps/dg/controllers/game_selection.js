@@ -574,14 +574,65 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
   saveCurrentGameState: function() {
     var gameSpec = this.get('currentGame'),
         gameContext = gameSpec && gameSpec.get('context'),
-        doAppCommandFunc = gameSpec && gameSpec.get('doCommandFunc');
+        doAppCommandFunc = gameSpec && gameSpec.get('doCommandFunc'),
+        gameElement = this.findCurrentGameElement( gameSpec && gameSpec.get('gameEmbedID')),
+        saveCommand = { operation: "saveState" },
+        result;
     // We can only save game state if we have a game callback function and a context.
-    if( doAppCommandFunc && gameContext) {
-      var result = doAppCommandFunc({ operation: "saveState" });
+    if( gameContext) {
+      if( doAppCommandFunc ) {
+        // for JavaScript games we can call directly with Objects as arguments
+        result = doAppCommandFunc( saveCommand);
+      } else if (gameElement && gameElement.doCommandFunc ) {
+        // for flash games we use the embedded swf object, then call its 'doCommandFunc'
+        result = gameElement.doCommandFunc( SC.json.encode( saveCommand ));
+        result = this.safeJsonDecode( result, "Invalid JSON found in saveCurrentGameState()" );
+      }
       // Stash the game state in the context's 'savedGameState' property.
       if( result && result.success)
         gameContext.set('savedGameState', result.state);
     }
+  },
+
+  /**
+   * Find the current game element in DG, by searching the DOM
+   *    Useful for callbacks to embedded flash .swf objects,
+   *    which have functions made available by AS3's ExternalInterface.addCallback()
+   * @param embeddedGameID the ID parameter of the game, e.g. set by ChainSaw.html for ChainSaw.swf
+   * @return {} null or an element of an iFrame that has the given html ID.
+   */
+  findCurrentGameElement: function( embeddedGameID ) {
+    // games are dynamically embedded objects in iFrames
+    var iFrames = document.getElementsByTagName("iframe"),
+        gameElement = null;
+    if( embeddedGameID ) {
+      var i,j; // find first iFrame with embedded element ID==embeddedGameID (expect 0 or 1 match)
+      for( i=0,j=iFrames.length; i<j && !gameElement; ++i ) {
+        gameElement = iFrames[i].contentWindow.document.getElementById( embeddedGameID);
+      }
+    }
+    return gameElement;
+  },
+
+    /**
+     * Decode an object that may be a JSON string, or maybe not.
+     * Useful to
+     * @param mayBeJSON
+     * @returns {*}
+     */
+  safeJsonDecode: function( mayBeJSON, warningString ) {
+    var result;
+    if( SC.typeOf( mayBeJSON ) === SC.T_STRING) {
+      try {  // Catch any exceptions thrown by the JSON parser
+        result = SC.json.decode( mayBeJSON );
+      }
+      catch(e) {
+        DG.logWarn( warningString + " [DG.GameSelection.safeJsonDecode]" );
+        DG.log( "JSON: "+result );
+        result = undefined;
+      }
+    }
+    return result;
   },
 
   /**
