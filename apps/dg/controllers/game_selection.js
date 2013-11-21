@@ -74,7 +74,7 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
   ],  // end of baseGames
 
   srriGames: [
-    DG.BaseGameSpec.create({ name: null, isSeparator: true }),
+    //DG.BaseGameSpec.create({ name: null, isSeparator: true }),
 
     DG.GameSpec.create({
       name: 'Chainsaw',
@@ -92,19 +92,20 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
       name: 'Inference Games',
       dimensions: { width: 575, height: 325 },  // for better initial loading; matches InferenceGames.mxml/.html
       url: 'DataGames/FlashGames/InferenceGames.html'
-    }),
+    })//,
 
-    DG.GameSpec.create({
-      name: 'Crop Monster',
-      dimensions: { width: 800, height: 600 },  // for better initial loading; matches CropMonster.mxml/.html
-      url: 'DataGames/FlashGames/CropMonster.html'
-    }),
+    // ready to remove obsolete games
+    //DG.GameSpec.create({
+    //  name: 'Crop Monster',
+    //  dimensions: { width: 800, height: 600 },  // for better initial loading; matches CropMonster.mxml/.html
+    //  url: 'DataGames/FlashGames/CropMonster.html'
+    //}),
 
-    DG.GameSpec.create({
-      name: 'Rock Roll',
-      dimensions: { width: 800, height: 400 },  // for better initial loading; matches RockRoll.mxml/.html
-      url: 'DataGames/FlashGames/RockRoll.html'
-    })
+    //DG.GameSpec.create({
+    //  name: 'Rock Roll',
+    //  dimensions: { width: 800, height: 400 },  // for better initial loading; matches RockRoll.mxml/.html
+    //  url: 'DataGames/FlashGames/RockRoll.html'
+    //})
   ],  // end of SRRI games
 
   /**
