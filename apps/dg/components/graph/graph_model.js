@@ -705,15 +705,10 @@ DG.GraphModel = SC.Object.extend( DG.Destroyable,
 
       var getGraphMenuItems = function () {
         var tSelection = this_.get( 'selection' ),
-          tDeleteIsEnabled = tSelection && tSelection.get( 'length' ) !== 0,
-          tShowHideCountTitle = (tPlot.get( 'isPlottedCountVisible' ) ?
-                                 'DG.PlotModel.hideCount' :
-                                 'DG.PlotModel.showCount').loc();
+            tDeleteIsEnabled = tSelection && tSelection.get( 'length' ) !== 0;
         return [
           { title:"Select All", target:this_, itemAction:this_.selectAll, isEnabled:true },
-          { title:"Delete Selected Cases", target:this_, itemAction:this_.deleteSelectedCases,
-            isEnabled:tDeleteIsEnabled },
-          { title:tShowHideCountTitle, target:tPlot, itemAction:tPlot.togglePlottedCount }
+          { title:"Delete Selected Cases", target:this_, itemAction:this_.deleteSelectedCases, isEnabled:tDeleteIsEnabled }
         ];
       };
 
@@ -721,18 +716,6 @@ DG.GraphModel = SC.Object.extend( DG.Destroyable,
           concat( getGraphMenuItems()). // then menu items for all plots...
           concat( [{ isSeparator: YES }]).
           concat( this.createHideShowAttributeSubMenuItems());
-        /*  remove submenus --CDM 2013-09-24, flatted gear menu is much easier to use.
-        .concat(
-          [
-            { isSeparator: YES },
-            { title: 'DG.GraphMenu.remove'.loc(), subMenu: [
-              this.createRemoveAttributeMenuItem( 'x', kIsForSubmenu),
-              this.createRemoveAttributeMenuItem( 'y', kIsForSubmenu),
-              this.createRemoveAttributeMenuItem( 'legend', kIsForSubmenu)
-            ]},
-            { title: 'DG.GraphMenu.hide'.loc(), subMenu: this.createHideShowAttributeSubMenuItems() }
-          ] );
-        */
     },
 
     /** Submenu items for hiding selected or unselected cases, or showing all cases */
