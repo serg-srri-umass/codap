@@ -78,10 +78,11 @@ SC.stringsFor('English', {
   'DG.AppController.closeDocument.cancelButtonTitle' : "Cancel",
   'DG.AppController.beforeUnload.confirmationMessage' : "The document contains unsaved changes.",
   'DG.AppController.optionMenuItems.reportProblem' : "Report Problem...",
-  'DG.AppController.optionMenuItems.viewWebPage' : "View Web Page...",
+  'DG.AppController.optionMenuItems.viewWebPage' : "Display Web Page...",
   'DG.AppController.optionMenuItems.about' : "About Data Games...",
   'DG.AppController.optionMenuItems.releaseNotes' : "What's New?",
   'DG.AppController.optionMenuItems.help' : "Help...",
+  'DG.AppController.optionMenuItems.toWebSite' : "Data Games website",
   'DG.AppController.optionMenuItems.logout' : "Logout",
   'DG.AppController.openDocument.prompt' : "Choose a document to open:",
   'DG.AppController.openDocument.okTitle' : "Open",
@@ -167,7 +168,7 @@ SC.stringsFor('English', {
   'DG.ToolButtonData.mapButton.title' : "Map",
   'DG.ToolButtonData.mapButton.toolTip' : "Make a map",
   'DG.ToolButtonData.optionMenu.title' : "Options",
-  'DG.ToolButtonData.optionMenu.toolTip' : "Delete data, report a problem, learn about Data Games, ...",
+  'DG.ToolButtonData.optionMenu.toolTip' : "Help, activities, learn about Data Games, ...",
   
   // DG.DataContext
   'DG.DataContext.singleCaseName': "case",

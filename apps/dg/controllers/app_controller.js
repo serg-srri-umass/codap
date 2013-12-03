@@ -106,16 +106,20 @@ DG.appController = SC.Object.create((function() // closure
   
   optionMenuItems: function() {
     return [
-      { localize: true, title: 'DG.AppController.optionMenuItems.viewWebPage', // "View Web Page..."
-        target: this, action: 'viewWebPage' },
+      { localize: true, title: 'DG.AppController.optionMenuItems.help', // "Help...",
+        target: this, action: 'showHelp' },
       { localize: true, title: 'DG.AppController.optionMenuItems.reportProblem', // "Report Problem..."
         target: this, action: 'reportProblem' },
+      { localize: true, title: 'DG.AppController.optionMenuItems.toWebSite', // "Data Games website...",
+        target: this, action: 'showWebSite' },
+      { isSeparator: YES },
       { localize: true, title: 'DG.AppController.optionMenuItems.about', // "About Data Games...",
         target: this, action: 'showAbout' },
       { localize: true, title: 'DG.AppController.optionMenuItems.releaseNotes', // "What's New?",
         target: this, action: 'showReleaseNotes' },
-      { localize: true, title: 'DG.AppController.optionMenuItems.help', // "Help...",
-        target: this, action: 'showHelp' }
+      { isSeparator: YES },
+      { localize: true, title: 'DG.AppController.optionMenuItems.viewWebPage', // "View Web Page..."
+        target: this, action: 'viewWebPage' }
       ];
   }.property(),
 
@@ -588,6 +592,15 @@ DG.appController = SC.Object.create((function() // closure
       DG.currDocumentController().addWebView( DG.mainPage.get('docView'), null,
         'http://'+DG.DRUPAL_SUBDOMAIN+DG.authorizationController.getLoginCookieDomain()+'/support', 'Help with Data Games',
         { centerX: 0, centerY: 0, width: 600, height: 400 });
+    },
+
+    /**
+     Open a new tab with the Data Games website.
+     */
+    showWebSite: function() {
+      //var windowFeatures = "location=yes,scrollbars=yes,status=yes,titlebar=yes";
+      var url = 'http://'+DG.DRUPAL_SUBDOMAIN+DG.authorizationController.getLoginCookieDomain();
+      window.open( url, 'dg_website' );
     }
 
   }; // end return from closure
