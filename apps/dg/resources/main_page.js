@@ -78,21 +78,20 @@ DG.mainPage = SC.Page.design((function() {
           iChildView.set( 'layout', tLayout );
           return tNewRight;
         }
-        var this_ = this,
-            tSpacer = 10,
-            tButtonWidth = 40,
-            tLeft = tSpacer;
+        var kSpacer = 10,
+            kButtonWidth = 40,
+            tLeft = kSpacer;
         // create tool buttons, left-justified
         DG.ToolButtonData.forEach( function( iButton) {
-          this_[ iButton.name] = DG.IconButton.create( iButton.desc);
-          this_[ iButton.name].set('layout', { left: tLeft, width: tButtonWidth });
-          this_.appendChild( this_[ iButton.name]);
-          tLeft += tButtonWidth + tSpacer;
-        });
+          this[ iButton.name] = DG.IconButton.create( iButton.desc);
+          this[ iButton.name].set('layout', { left: tLeft, width: kButtonWidth });
+          this.appendChild( this[ iButton.name]);
+          tLeft += kButtonWidth + kSpacer;
+        }.bind(this));
         // move existing buttons, left-justified after tool buttons
-        tLeft += tSpacer; // extra space to right of gear
-        tLeft = tSpacer + moveHorizontal( this.resetButton, tLeft );
-        tLeft = tSpacer + moveHorizontal( this.logoutButton, tLeft );
+        tLeft += kSpacer; // extra space to right of gear
+        tLeft = kSpacer + moveHorizontal( this.resetButton, tLeft );
+        tLeft = kSpacer + moveHorizontal( this.logoutButton, tLeft );
         moveHorizontal( this.versionLabel, tLeft );  // same left as statusLabel
         tLeft = moveHorizontal( this.statusLabel, tLeft );
       }

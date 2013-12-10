@@ -39,8 +39,8 @@ SC.stringsFor('English', {
   'DG.Authorization.loginPane.passwordLabel'  : "Password",
   'DG.Authorization.loginPane.loginAsGuest'   : "Login as guest",
   'DG.Authorization.loginPane.login'          : "Login",
-  'DG.Authorization.loginPane.registerLink'   : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/register'>Create a new account</a>",
-  'DG.Authorization.loginPane.recoveryLink'   : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/password'>Forgot your password?</a>",
+  'DG.Authorization.loginPane.registerLink'   : "<a href='http://%@/user/register'>Create a new account</a>",
+  'DG.Authorization.loginPane.recoveryLink'   : "<a href='http://%@/user/password'>Forgot your password?</a>",
   'DG.Authorization.loginPane.error.general'  : "Error occurred while logging in",
   'DG.Authorization.loginPane.error.userDatabaseError' : "Error connecting to the user database",
   'DG.Authorization.loginPane.error.authFailed': "Invalid username or password",
@@ -55,8 +55,8 @@ SC.stringsFor('English', {
 
   // DG.IS_SRRI_BUILD variants of strings for SRRI build
   'DG.mainPage.mainPane.versionString.SRRI_BUILD' : "Version %@ (%@.srri10)", // Add suffix to version to identify SRRI's subsequent modifications .srri0, .srri1, .srri2 etc.
-  'DG.Authorization.loginPane.registerLink.SRRI_BUILD' : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/register'>Create a new account</a>",
-  'DG.Authorization.loginPane.recoveryLink.SRRI_BUILD' : "<a href='http://"+DG.DRUPAL_SUBDOMAIN+"%@/user/password'>Forgot your password?</a>",
+  'DG.Authorization.loginPane.registerLink.SRRI_BUILD' : "<a href='http://%@/user/register'>Create a new account</a>",
+  'DG.Authorization.loginPane.recoveryLink.SRRI_BUILD' : "<a href='http://%@/user/password'>Forgot your password?</a>",
 
     // DG.AppController
   'DG.AppController.resetData.title' : "Clear Data...",
@@ -108,6 +108,14 @@ SC.stringsFor('English', {
   'DG.AppController.exportDocument.okTitle' : "Done",
   'DG.AppController.exportDocument.okTooltip' : "Done with JSON export",
   'DG.AppController.reportProblem.dialogTitle' : "Report Data Games Problem",
+  'DG.AppController.manageDocumentsURL' : '/datagames_documents_manager', // path on Drupal website
+  'DG.AppController.showWebSiteURL' : '/', // path on Drupal website
+  'DG.AppController.showHelpURL' : '/support', // path on Drupal website
+  'DG.AppController.showHelpTitle' : 'Help with Data Games',
+  'DG.AppController.showAboutURL' : 'DataGames/WebPages/about/aboutDG.html', // path on Drupal website
+  'DG.AppController.showAboutTitle' : 'About Data Games',
+  'DG.AppController.showReleaseNotesURL' : 'http://play.ccssgames.com/release_notes', // path on Drupal website
+  'DG.AppController.showReleaseNotesTitle' : 'Data Games Release Notes',
 
   // DG.OpenSaveDialog - Generally defaults which can be overridden by clients
   'DG.OpenSaveDialog.promptView.value' : "Choose a document/name",
