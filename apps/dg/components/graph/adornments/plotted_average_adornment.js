@@ -44,6 +44,17 @@ DG.PlottedAverageAdornment = DG.PlotAdornment.extend( DG.LineLabelMixin,
   titlePrecision: 2,    /** {Number} extra floating point precision of average value for this.titleString */
   titleFraction: 1/5,   /** {Number} fraction-from-top for placement of average=123 text */
 
+  shadingLayerName: '', /** Set on creation. This is layer where we stash backgrounds */
+  /**
+   * All my Raphael elements go in this layer
+   * @property { DG.RaphaelLayer }
+   */
+  shadingLayer: function() {
+    var tLayerManager = this.getPath('paperSource.layerManager');
+    return (tLayerManager && this.layerName) ? tLayerManager[ this.shadingLayerName] :null;
+  }.property('paperSource', 'shadingLayerName' ),
+
+
   /**
     Concatenated array of ['PropertyName','ObserverMethod'] pairs used for indicating
     which observers to add/remove from the model.
@@ -132,6 +143,8 @@ DG.PlottedAverageAdornment = DG.PlotAdornment.extend( DG.LineLabelMixin,
    */
   updateSymbols: function( iAnimate ) {
     var tAdornment = this,
+        tLayer = this.get('layer' ),
+        tShadingLayer = this.get('shadingLayer' ),
         tPrimaryAxisView = this.getPath('parentView.primaryAxisView'),
         tIsHorizontal = tPrimaryAxisView && (tPrimaryAxisView.get('orientation') === 'horizontal'),
         tValuesArray = this.getPath('model.values'),
@@ -189,6 +202,9 @@ DG.PlottedAverageAdornment = DG.PlotAdornment.extend( DG.LineLabelMixin,
         this.myElements.push( tBackground );
         this.myElements.push( tSymbol );
         this.myElements.push( tCover );
+        tShadingLayer.push( tBackground);
+        tLayer.push( tSymbol);
+        tLayer.push( tCover);
       }
 
       // update elements (to current size/position)
@@ -231,19 +247,15 @@ DG.PlottedAverageAdornment = DG.PlotAdornment.extend( DG.LineLabelMixin,
    * @param iDesiredNumSymbols
    */
   removeExtraSymbols: function( iDesiredNumSymbols ) {
-    var i, j, tElement;
-    
-    // Raphael sets 'this' to the element for completion callbacks.
-    function removeOnCompletion() { this.remove(); }
+    var tLayer = this.get('layer' ),
+        tShadingLayer = this.get('shadingLayer' ),
+        i, j, tElement;
     
     for( i=iDesiredNumSymbols, j=this.myElements.length; i<j; ++i ) {
       tElement = this.myElements[i];
-      if( tElement.animatable) {
-        tElement.animate( { 'stroke-opacity': 0 }, DG.PlotUtilities.kDefaultAnimationTime, '<>',
-                          removeOnCompletion);
-      }
-      else
-        tElement.remove(); // remove from paper
+      tLayer.prepareToMoveOrRemove( tElement);
+      tShadingLayer.prepareToMoveOrRemove( tElement);
+      tElement.remove();
     }
     this.myElements.length = iDesiredNumSymbols;
   },

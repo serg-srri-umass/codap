@@ -32,10 +32,16 @@ DG.PlotAdornment = SC.Object.extend(
   model: null,
 
   /**
-    What we draw on.
-    @property { Raphael }
+   * @property {DG.PlotBackgroundView}
   */
-  paper: null,
+  paperSource: null,
+
+  /**
+   * @property( Raphael }
+   */
+  paper: function() {
+    return this.getPath('paperSource.paper');
+  }.property('paperSource' ).cacheable(),
 
   /**
     Provides x-coordinates
@@ -61,6 +67,21 @@ DG.PlotAdornment = SC.Object.extend(
   */
   myElements: null,
   
+  /**
+   * The key into the layerManager to get the layer we use to display
+   * @property { String }
+   */
+  layerName: null,
+
+  /**
+   * All my Raphael elements go in this layer
+   * @property { DG.RaphaelLayer }
+   */
+  layer: function() {
+    var tLayerManager = this.getPath('paperSource.layerManager');
+    return (tLayerManager && this.layerName) ? tLayerManager[ this.layerName] :null;
+  }.property('paperSource', 'layerName' ),
+
   /**
     Contains an array of elements, each of which corresponds to a pair of strings
     indicating a model property that should be observed and the handler that should
@@ -103,8 +124,10 @@ DG.PlotAdornment = SC.Object.extend(
     Destruction method
    */
   destroy: function() {
+    var tLayerManager = this.getPath('paperSource.layerManager');
     this.detachModel();
     this.myElements.forEach( function( iElement) {
+      tLayerManager.removeElement( iElement);
       iElement.remove();
     });
     this.myElements = null;

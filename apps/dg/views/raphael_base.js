@@ -17,6 +17,7 @@
 // ==========================================================================
 
 sc_require('libraries/raphael');
+sc_require( 'utilities/layer_manager' );
 
 /** @class
 
@@ -59,6 +60,19 @@ DG.RaphaelBaseView = SC.View.extend( DG.Destroyable,
   paper: function() {
     return this._paper;
   }.property('_paper'),
+
+  /**
+   * @property {DG.LayerManager }
+   */
+  _layerManager: null,
+
+  layerManager: function() {
+    // lazy instantiation because _paper must exist
+    if( !this._layerManager) {
+      this.initLayerManager();
+    }
+    return this._layerManager;
+  }.property(),
 
   /**
   During createVisualization, stash elements in here that should be removed and regenerated
@@ -207,12 +221,23 @@ DG.RaphaelBaseView = SC.View.extend( DG.Destroyable,
   },
 
   /**
+   * Subclasses can override calling sc_super() and then adding layers at will.
+   */
+  initLayerManager: function() {
+    if( !this._layerManager) {
+      DG.assert( this._paper);
+      this._layerManager = new DG.LayerManager( this._paper );
+    }
+  },
+
+  /**
     This is our opportunity to create the paper on which we'll draw.
   */
   didCreateLayer: function didCreateLayer() {
     /* jshint -W064 */  // Missing 'new' prefix when invoking a constructor. (W064)
     this._paper = Raphael(this.get('layer'), 
                           this.get('drawWidth'), this.get('drawHeight'));
+
     this.createVisualization();
   },
 
