@@ -89,7 +89,7 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
     }),
 
     DG.GameSpec.create({
-      name: 'Inference Games',
+      name: 'Inference',
       dimensions: { width: 575, height: 325 },  // for better initial loading; matches InferenceGames.mxml/.html
       url: 'DataGames/FlashGames/InferenceGames.html'
     })//,
