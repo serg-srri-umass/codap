@@ -773,13 +773,19 @@ DG.PlotView = SC.Object.extend( DG.Destroyable,
           tElements[ iIndex].attr( tPt);
           tAnimate = true;
           if( !tHaveInstalledCallback) {
-            tHaveInstalledCallback = true;
             tCallBack = function() {
               this_.setPath('model.isAnimating', false);  // Allow standard draw
+              // Draw once more because it can happen that a graph layout has happened since we computed
+              // point coordinates
+              this_.drawData();
             };
           }
         }
+        // setCircleCoordinate returns null if coordinates are not valid
         tPt = this_.setCircleCoordinate( tRC, iCase, iIndex, tAnimate, tCallBack);
+        if( tPt && tCallBack) {
+          tHaveInstalledCallback = true;
+        }
         if( hasVanishingElements ) {
           tNewPointAttrs.push( tPt );
         }

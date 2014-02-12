@@ -132,21 +132,18 @@ DG.LookupAggFns = {
       // the subsequent case, i.e. the case at the subsequent index.
       function getNextEvalContext( iContext, iEvalContext) {
         var parentCase = iEvalContext._case_ && iEvalContext._case_.get('parent'),
-            collectionCases = iContext && iContext.getPath('collection.cases'),
-            caseCount = collectionCases && collectionCases.get('length'),
+            children = parentCase && parentCase.get('children'),
+            caseCount = children && children.get('length'),
             thisCaseIndex = iContext.getCaseIndex( iEvalContext._id_),  // 1-based index
-            nextCase = collectionCases && (thisCaseIndex < caseCount)
-                            ? collectionCases.objectAt( thisCaseIndex)  // 0-based index
-                            : null,
-            nextParentID = nextCase && nextCase.getPath('parent.id');
-        // Parents must match
-        if( parentCase && (parentCase.get('id') !== nextParentID))
-          nextCase = null;
+            nextCase = children && (thisCaseIndex < caseCount)
+                            ? children.objectAt( thisCaseIndex) // 0-based index
+                            : null;
         return nextCase ? { _case_: nextCase, _id_: nextCase.get('id') } : null;
       }
       
       var nextEvalContext = valueFn && getNextEvalContext( iContext, iEvalContext);
       
+      // default to undefined (empty) if no user-specified default
       return nextEvalContext
                     ? valueFn( iContext, nextEvalContext)
                     : defaultFn ? defaultFn( iContext, iEvalContext) : undefined;
@@ -172,24 +169,20 @@ DG.LookupAggFns = {
       // is the previous case, i.e. the case at the previous index.
       function getPrevEvalContext( iContext, iEvalContext) {
         var parentCase = iEvalContext._case_ && iEvalContext._case_.get('parent'),
-            collectionCases = iContext && iContext.getPath('collection.cases'),
+            children = parentCase && parentCase.get('children'),
             thisCaseIndex = iContext.getCaseIndex( iEvalContext._id_),  // 1-based index
-            prevCase = collectionCases && (thisCaseIndex >= 2)
-                            ? collectionCases.objectAt( thisCaseIndex - 2)  // 0-based index
-                            : null,
-            prevParentID = prevCase && prevCase.getPath('parent.id');
-        // Parents must match
-        if( parentCase && (parentCase.get('id') !== prevParentID))
-          prevCase = null;
+            prevCase = children && (thisCaseIndex >= 2)
+                            ? children.objectAt( thisCaseIndex - 2)  // 0-based index
+                            : null;
         return prevCase ? { _case_: prevCase, _id_: prevCase.get('id') } : null;
       }
       
       var prevEvalContext = valueFn && getPrevEvalContext( iContext, iEvalContext);
 
-      // Default to zero if no user-specified default.
+      // default to undefined (empty) if no user-specified default
       return prevEvalContext
                     ? valueFn( iContext, prevEvalContext)
-                    : defaultFn ? defaultFn( iContext, iEvalContext) : 0;
+                    : defaultFn ? defaultFn( iContext, iEvalContext) : undefined;
     }
   
   })

@@ -229,8 +229,13 @@ DG.DataContext = SC.Object.extend((function() // closure
         result = this.doSelectCases( iChange);
         break;
       case 'createAttributes':
-      case 'updateAttributes':
         result = this.doCreateAttributes( iChange);
+        break;
+      case 'updateAttributes':
+        result = this.doUpdateAttributes( iChange);
+        break;
+      case 'deleteAttributes':
+        result = this.doDeleteAttributes( iChange);
         break;
     }
     return result;
@@ -463,6 +468,7 @@ DG.DataContext = SC.Object.extend((function() // closure
   doDeleteCases: function( iChange) {
   
     iChange.ids = [];
+    iChange.collectionIDs = {};
   
     var deleteCaseAndChildren = function( iCase) {
       var tChildren = iCase.get('children');
@@ -470,11 +476,21 @@ DG.DataContext = SC.Object.extend((function() // closure
         tChildren.forEach( deleteCaseAndChildren);
 
       iChange.ids.push( iCase.get('id'));
-      DG.Case.destroyCase( iCase);
+      
+      var tCollection = this.getCollectionForCase( iCase);
+      tCollection.deleteCase( iCase);
+      // keep track of the affected collections
+      iChange.collectionIDs[ tCollection.get('id')] = tCollection;
     }.bind( this);
     
     iChange.cases.forEach( deleteCaseAndChildren);
-    DG.store.commitRecords();
+
+    // Call didDeleteCases() for each affected collection
+    DG.ObjectMap.forEach( iChange.collectionIDs,
+                          function( iCollectionID, iCollection) {
+                            if( iCollection)
+                              iCollection.didDeleteCases();
+                          });
     return { success: true };
   },
   
@@ -513,6 +529,91 @@ DG.DataContext = SC.Object.extend((function() // closure
     return result;
   },
 
+  /**
+    Updates the specified properties of the specified attributes.
+    @param  {Object}    iChange - The change request object
+              {String}  .operation - "updateCases"
+              {DG.CollectionClient} .collection - Collection whose attributes(s) are changed
+              {Array of Object} .attrPropsArray - Array of attribute properties
+    @returns  {Object}
+                {Boolean}               .success
+                {Array of DG.Attribute} .attrs
+                {Array of Number}       .attrIDs
+   */
+  doUpdateAttributes: function( iChange) {
+    var collection = typeof iChange.collection === "string"
+                        ? this.getCollectionByName( iChange.collection)
+                        : iChange.collection,
+        result = { success: false, attrs: [], attrIDs: [] };
+    
+    // Function to update each individual attribute
+    function updateAttribute( iAttrProps) {
+      // Look up the attribute by ID if one is specified
+      var attribute = collection && !SC.none( iAttrProps.id)
+                        ? collection.getAttributeByID( iAttrProps.id)
+                        : null;
+      // Look up the attribute by name if not found by ID
+      if( !attribute && collection && iAttrProps.name) {
+        attribute = collection.getAttributeByName( iAttrProps.name);
+      }
+      if( attribute) {
+        attribute.beginPropertyChanges();
+        DG.ObjectMap.forEach( iAttrProps,
+                              function( iKey, iValue) {
+                                if( iKey !== "id") {
+                                  attribute.set( iKey, iValue);
+                                }
+                              });
+        attribute.endPropertyChanges();
+        result.success = true;
+        result.attrs.push( attribute);
+        result.attrIDs.push( attribute.get('id'));
+      }
+    }
+    
+    // Create/update each specified attribute
+    if( collection && iChange.attrPropsArray)
+      iChange.attrPropsArray.forEach( updateAttribute);
+    return result;
+  },
+  
+  /**
+    Deletes the specified attributes.
+    @param  {Object}    iChange - The change request object
+              {String}  .operation - "deleteCases"
+              {DG.CollectionClient} .collection - Collection whose attributes(s) are changed
+              {Array of Object} .attrs - Array of attributes to delete
+    @returns  {Object}
+                {Boolean}               .success
+                {Array of DG.Attribute} .attrs
+                {Array of Number}       .attrIDs
+   */
+  doDeleteAttributes: function( iChange) {
+    var collection = typeof iChange.collection === "string"
+                        ? this.getCollectionByName( iChange.collection)
+                        : iChange.collection,
+        result = { success: false, attrIDs: [] };
+    
+    // Function to delete each individual attribute
+    function deleteAttribute( iAttr) {
+      // Look up the attribute by ID if one is specified
+      var attribute = collection && !SC.none( iAttr.id)
+                        ? collection.getAttributeByID( iAttr.id)
+                        : null;
+      if( attribute) {
+        DG.Attribute.destroyAttribute( iAttr.attribute);
+        result.attrIDs.push( iAttr.id);
+      }
+    }
+    
+    // Create/update each specified attribute
+    if( collection && iChange.attrs) {
+      iChange.attrs.forEach( deleteAttribute);
+      DG.store.commitRecords();
+    }
+    return result;
+  },
+  
   /**
    * Export the case data for all attributes and cases of the given collection,
    * suitable for pasting into TinkerPlots/Fathom.
@@ -663,6 +764,16 @@ DG.DataContext = SC.Object.extend((function() // closure
    */
   getCollectionForCase: function( iCase) {
     return this.getCollectionByID( iCase.getPath('collection.id'));
+  },
+  
+  /**
+    Returns the collection (DG.CollectionClient) which contains
+    the specified attribute (DG.Attribute).
+    @param    {DG.Attribute}          iAttribute -- The attribute whose collection is to be returned
+    @returns  {DG.CollectionClient}   The collection which contains the specified case
+   */
+  getCollectionForAttribute: function( iAttribute) {
+    return this.getCollectionByID( iAttribute.getPath('collection.id'));
   },
   
   /**
