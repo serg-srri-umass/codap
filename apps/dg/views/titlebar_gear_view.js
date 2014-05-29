@@ -5,7 +5,7 @@
 //  
 //  Author:   William Finzer
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ DG.TitleBarGearView = SC.ImageView.extend(
         var tController = this.get('controller');
         return !SC.none( tController) ?
                 tController.get('gearMenuItems') : [];
-      }.property('controller'),
+      }.property('controller', 'controller.gearMenuItems'),
 
       updateVisibility: function() {
         var items = this.get('controllerItems'),

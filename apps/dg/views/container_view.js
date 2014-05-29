@@ -5,7 +5,7 @@
 //  
 //  Author:   William Finzer
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -76,8 +76,10 @@ DG.ContainerView = SC.View.extend(
         this.get('componentViews').forEach(
                           function( iView) {
                             var tLayout = iView.get('layout');
-                            tWidth = Math.max( tWidth, tLayout.left + tLayout.width);
-                            tHeight = Math.max( tHeight, tLayout.top + tLayout.height);
+                            // Rarely, a layout will be missing the fields we need
+                            // NB: Attempting to call get('frame') causes infinite recursion
+                            tWidth = Math.max( tWidth, (tLayout.left || 0) + (tLayout.width || 0));
+                            tHeight = Math.max( tHeight, (tLayout.top || 0) + (tLayout.height || 0));
                           });
         // Add a margin around the components as part of the content
         tWidth += kDocMargin;
@@ -110,8 +112,14 @@ DG.ContainerView = SC.View.extend(
       }.property('frameNeedsUpdate').cacheable(),
       
       removeComponentView: function( iComponentView) {
-        DG.currDocumentController().removeComponentAssociatedWithView( iComponentView);
-        iComponentView.destroy();
+        var tCloseAction = iComponentView.get('closeAction');
+        if( tCloseAction) {
+          tCloseAction.action.apply( tCloseAction.target, tCloseAction.args );
+        }
+        else {
+          DG.currDocumentController().removeComponentAssociatedWithView( iComponentView);
+          iComponentView.destroy();
+        }
       },
       
       /**

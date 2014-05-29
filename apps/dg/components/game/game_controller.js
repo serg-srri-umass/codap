@@ -1,7 +1,7 @@
 // ==========================================================================
 //                          DG.GameController
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -943,15 +943,10 @@ DG.GameController = DG.ComponentController.extend(
     if( gameSpec && iComponentStorage.currentGameFormulas)
       gameSpec.set('formulas', iComponentStorage.currentGameFormulas);
 
-    // Use invokeLater() to delay the actual changing of the game until after all the
-    // components have been read in successfully. Otherwise, we can end up with multiple
-    // instances of the game component and other anomalies.
-    DG.gameSelectionController.invokeLater( function() {
-                                  DG.gameSelectionController.
-                                    setCurrentGameByName( gameName,
-                                                          requestedDimensions);
-                                  this.set('gameIsReady', true);
-                               }.bind(this));
+    // For a while we had an invokeLater wrapping the next two lines because it improved
+    // Chromes ability to load the game. But we think fixed that in a better way
+    DG.gameSelectionController.setCurrentGameByName( gameName, requestedDimensions);
+    this.set('gameIsReady', true);
   },
   
   /**

@@ -3,7 +3,7 @@
 // 
 //  A collection of utilities for manipulating views
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -109,8 +109,9 @@ DG.ViewUtilities = {
       kGap = 5, // Also used to increment during search
       tLoc = { x: kGap, y: kGap },
       tSuccess = false,
-      tViewRects = iViews.map( function( iView) { return iView.get('frame'); })
-      ;
+      tViewRects = iViews.map( function( iView) {
+        return iView.get('isVisible') ? iView.get('frame') : { x: 0, y: 0, width: 0, height: 0 };
+      });
     
     function intersectRect( r1, r2) {
       var tRes = (!isNaN( r1.x) && !isNaN( r1.y)) &&

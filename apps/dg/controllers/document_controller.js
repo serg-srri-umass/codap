@@ -5,7 +5,7 @@
 //  
 //  Author:   Kirk Swenson
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -69,7 +69,37 @@ DG.DocumentController = SC.Object.extend(
   gameView: function() {
     return this._singletonViews.gameView || null;
   }.property(),
+
+    /**
+     * Set by singleton AppController on startup
+     * @property {SC.MenuPane}
+     */
+  guideMenuPane: null,
   
+    /**
+     * Set by singleton MainPage on startup
+     * @property {DG.IconButton}
+     */
+  guideButton: null,
+
+  _guideModel: null,
+  guideModel: function() {
+    if( !this._guideModel) {
+      this._guideModel = DG.GuideModel.create();
+    }
+    return this._guideModel;
+  }.property(),
+
+  _guideController: null,
+  guideController: function() {
+    if( !this._guideController) {
+      this._guideController = DG.GuideController.create( {
+        guideModel: this.get('guideModel')
+      });
+    }
+    return this._guideController;
+  }.property(),
+
   /**
    *  The ID of the document managed by this controller.
    *  @property {String}
@@ -262,6 +292,9 @@ DG.DocumentController = SC.Object.extend(
     case 'SC.WebView':
       this.addWebView( docView, iComponent);
       break;
+    case 'DG.GuideView':
+      this.addGuideView( docView, iComponent);
+      break;
     default:
       didCreateComponent = false;
       break;
@@ -394,7 +427,8 @@ DG.DocumentController = SC.Object.extend(
                                                     iParams.componentClass.constructor,
                                                     iParams.contentProperties,
                                                     iParams.title, iParams.isResizable,
-                                                    iParams.useLayout);
+                                                    iParams.useLayout,
+                                                    iParams.isVisible);
       var defaultFirstResponder = tComponentView && tComponentView.getPath('contentView.defaultFirstResponder');
       if( defaultFirstResponder) {
         if( defaultFirstResponder.beginEditing) {
@@ -419,9 +453,9 @@ DG.DocumentController = SC.Object.extend(
   },
   
   addGame: function( iParentView, iComponent) {
-    var tGameParams = DG.gameSelectionController.get('currentDimensions'),
-        tGameName = DG.gameSelectionController.get('currentName');
-    
+    var tGameParams = DG.gameSelectionController.get('currentDimensions') || { width: 0, height: 0 },
+        tGameName = DG.gameSelectionController.get('currentName') || '';
+
     var tView = this.createComponentView(iComponent, {
                               parentView: iParentView, 
                               controller: DG.currGameController,
@@ -587,6 +621,79 @@ DG.DocumentController = SC.Object.extend(
                           );
   },
 
+  addGuideView: function( iParentView, iComponent) {
+    if( this._singletonViews.guideView)
+      return; // only one allowed
+
+    var tModel = this.get('guideModel'),
+        tController = this.get('guideController' ),
+        tView = this.createComponentView(iComponent, {
+                            parentView: iParentView,
+                            controller: tController,
+                            componentClass: { type: 'DG.GuideView', constructor: DG.GuideView},
+                            contentProperties: { backgroundColor: 'white', guideModel: tModel,
+                                                  controller: tController
+                              ,
+                                                  closeAction: { action: this.closeGuideView, target: this }
+                            },
+                            defaultLayout: { width: 400, height: 200 },
+                            isResizable: true,
+                            useLayout: true,
+                            isVisible: false }
+                          );
+    this._singletonViews.guideView = tView;
+    return tView;
+  },
+
+    /**
+     * This gets called when the user 'closes' the guide view. Instead of removing the
+     * component and its view, we just hide it for future use.
+     */
+  closeGuideView: function() {
+    var tGuideComponentView = this._singletonViews.guideView;
+    if( tGuideComponentView) {
+      tGuideComponentView.set('isVisible', false);
+    }
+  },
+
+    /**
+     * Puts a modal dialog with a place for a URL. If user OK's, the URL is used for an added web view.
+     */
+  configureGuide: function() {
+
+    var this_ = this,
+        tDialog = null,
+        tGuideModel = this.get('guideModel');
+
+      var storeGuideModel = function () {
+        this.addGuideView( DG.mainPage.docView);  // Make sure we have one hooked up to model
+        tGuideModel.beginPropertyChanges();
+          tGuideModel.set('title', tDialog.get('title'));
+          tGuideModel.set('items', tDialog.get('items'));
+        tGuideModel.endPropertyChanges();
+        tDialog.close();
+      }.bind(this);
+
+    tDialog = DG.CreateGuideConfigurationView( {
+                    okTarget: null,
+                    okAction: storeGuideModel,
+                    model: tGuideModel
+                  });
+  },
+
+    /**
+     * If we have both a button and a menu pane, we can pass them to the guideController.
+     */
+  guideButtonOrMenuDidChange: function() {
+    var tButton = this.get('guideButton' ),
+        tPane = this.get('guideMenuPane');
+    if( tButton && tPane) {
+      var tController = this.get('guideController');
+      tController.set('guideButton', tButton);
+      tController.set('guideMenuPane', tPane);
+    }
+  }.observes('guideButton', 'guideMenuPane'),
+
   toggleComponent: function( iDocView, iComponentName) {
     var componentView = this._singletonViews[ iComponentName];
     // If it already exists, then delete it.
@@ -637,6 +744,9 @@ DG.DocumentController = SC.Object.extend(
     this._singletonViews = {};
 
     this.componentControllersMap = {};
+
+    // Reset the guide
+    this.get('guideModel').reset();
   },
   
   removeComponentAssociatedWithView: function( iComponentView) {
@@ -756,8 +866,10 @@ DG.DocumentController = SC.Object.extend(
 });
 
 DG.currDocumentController = function() {
-  if( !DG._currDocumentController)
+  if( !DG._currDocumentController) {
     DG._currDocumentController = DG.DocumentController.create();
+    DG._currDocumentController.set('guideMenuPane', DG.appController.get('guideMenuPane'));
+  }
   return DG._currDocumentController;
 };
 

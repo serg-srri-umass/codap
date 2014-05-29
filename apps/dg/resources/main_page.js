@@ -1,7 +1,7 @@
 // ==========================================================================
 //                              DG.mainPage
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ DG.mainPage = SC.Page.design((function() {
         textAlign: SC.ALIGN_RIGHT,
         valueBinding: 'DG.authorizationController.currLogin.user'
       }),
-      
+
       init: function() {
         sc_super();
         function moveHorizontal( iChildView, iNewLeft ) {
@@ -88,6 +88,7 @@ DG.mainPage = SC.Page.design((function() {
           this.appendChild( this[ iButton.name]);
           tLeft += kButtonWidth + kSpacer;
         }.bind(this));
+        DG.currDocumentController().set('guideButton', this.guideButton);
         // move existing buttons, left-justified after tool buttons
         tLeft += kSpacer; // extra space to right of gear
         tLeft = kSpacer + moveHorizontal( this.resetButton, tLeft );
@@ -207,11 +208,14 @@ DG.mainPage = SC.Page.design((function() {
       addGame() - Will be called from main after mainPage.mainPane has been
         initialized. We can't describe the flashView as a childView because
         it isn't simple enough; i.e. it requires using DG.ComponentView.
+        4/15/14 (wff) Removed observes('DG.gameSelectionController.currentGame') in order
+          to prevent a second gameview from being created during restore document.
+          Seems not to be needed at all for choosing from game menu.
      */
   addGame: function() {
     if( !DG.currDocumentController().get('gameView'))
       DG.currDocumentController().addGame( this.scrollView.contentView);
-  }.observes('DG.gameSelectionController.currentGame')
+  }//.observes('DG.gameSelectionController.currentGame')
   
   }), // mainPane
 

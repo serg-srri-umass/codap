@@ -1,7 +1,7 @@
 // ==========================================================================
 //                              DG Strings
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ SC.stringsFor('English', {
   'DG.AppController.beforeUnload.confirmationMessage' : "The document contains unsaved changes.",
   'DG.AppController.optionMenuItems.reportProblem' : "Report Problem...",
   'DG.AppController.optionMenuItems.viewWebPage' : "Display Web Page...",
+  'DG.AppController.optionMenuItems.configureGuide' : "Configure Guide...",
   'DG.AppController.optionMenuItems.about' : "About Data Games...",
   'DG.AppController.optionMenuItems.releaseNotes' : "What's New?",
   'DG.AppController.optionMenuItems.help' : "Help...",
@@ -177,7 +178,10 @@ SC.stringsFor('English', {
   'DG.ToolButtonData.mapButton.toolTip' : "Make a map",
   'DG.ToolButtonData.optionMenu.title' : "Options",
   'DG.ToolButtonData.optionMenu.toolTip' : "Help, activities, learn about Data Games, ...",
-  
+  'DG.ToolButtonData.guideMenu.title' : "Guide",
+  'DG.ToolButtonData.guideMenu.toolTip' : "Show the guide for this activity and navigate within it",
+  'DG.ToolButtonData.guideMenu.showGuide' : "Show Guide",
+
   // DG.DataContext
   'DG.DataContext.singleCaseName': "case",
   'DG.DataContext.pluralCaseName': "cases",
@@ -237,6 +241,16 @@ SC.stringsFor('English', {
   'DG.AttrFormView.cancelBtnTitle' : "Cancel",
   'DG.AttrFormView.cancelBtnTooltip' : "Dismiss the dialog without making any changes",
   
+  // DG.GuideConfigurationView
+  'DG.GuideConfigView.titlePrompt' : "Guide Title",
+  'DG.GuideConfigView.titleHint' : "Activity Name",
+  'DG.GuideConfigView.itemTitleHint' : "Section Name",
+  'DG.GuideConfigView.itemURLHint' : "URL of section",
+  'DG.GuideConfigView.okBtnTitle' : "OK",
+  'DG.GuideConfigView.okBtnToolTip' : "Accept the Guide menu items",
+  'DG.GuideConfigView.cancelBtnTitle' : "Cancel",
+  'DG.GuideConfigView.cancelBtnTooltip' : "Dismiss the dialog without making any changes",
+
   // DG.CellLinearAxisView
   'DG.CellLinearAxisView.midPanelTooltip' : "Drag to translate axis scale",
   'DG.CellLinearAxisView.lowerPanelTooltip' : "Drag to change axis lower bound",

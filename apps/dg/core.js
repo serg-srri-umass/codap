@@ -3,7 +3,7 @@
 //
 //  DG is the namespace for all of the Data Games JavaScript code.
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -157,7 +157,7 @@ DG = SC.Application.create( (function() // closure
   };
   
   var isDevBuild = function() {
-    return (window.location.href.indexOf('-dev.kcptech.com') >= 0) ||
+    return (window.location.href.indexOf('-dev.codap.concord.org') >= 0) ||
            (window.location.href.indexOf('localhost:4020') >= 0);
   };
 
@@ -199,7 +199,7 @@ DG = SC.Application.create( (function() // closure
   /*
    * Build number
    */
-  BUILD_NUM: '0232',
+  BUILD_NUM: '0240',
 
   /**
    * The subdomain for the Drupal site which must be hosted on the same domain.  This is used for various interactions

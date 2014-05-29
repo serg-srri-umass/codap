@@ -1,7 +1,7 @@
 // ==========================================================================
 //                      DG.gameSelectionController
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -36,6 +36,13 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
    * @property {Array of DG.[Base]GameSpec}
    */
   baseGames: [
+    // This first, 'null' gamespec is part of our transition to getting rid of Game menu
+    DG.GameSpec.create({
+      name: "Please choose an activity",
+      dimensions: { width: 300, height: 20 },
+      url: ''
+    }),
+
     DG.GameSpec.create({
       name: "Cart Weight",
       dimensions: { width: 290, height: 350 },
@@ -74,7 +81,6 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
   ],  // end of baseGames
 
   srriGames: [
-    //DG.BaseGameSpec.create({ name: null, isSeparator: true }),
 
     DG.GameSpec.create({
       name: 'Chainsaw',
@@ -92,20 +98,8 @@ DG.gameSelectionController = SC.ObjectController.create((function() // closure
       name: 'Inference',
       dimensions: { width: 575, height: 325 },  // for better initial loading; matches InferenceGames.mxml/.html
       url: 'DataGames/FlashGames/InferenceGames.html'
-    })//,
+    })
 
-    // ready to remove obsolete games
-    //DG.GameSpec.create({
-    //  name: 'Crop Monster',
-    //  dimensions: { width: 800, height: 600 },  // for better initial loading; matches CropMonster.mxml/.html
-    //  url: 'DataGames/FlashGames/CropMonster.html'
-    //}),
-
-    //DG.GameSpec.create({
-    //  name: 'Rock Roll',
-    //  dimensions: { width: 800, height: 400 },  // for better initial loading; matches RockRoll.mxml/.html
-    //  url: 'DataGames/FlashGames/RockRoll.html'
-    //})
   ],  // end of SRRI games
 
   /**

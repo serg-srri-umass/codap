@@ -1,7 +1,7 @@
 // ==========================================================================
 //                          DG.appController
 //
-//  Copyright ©2013 KCP Technologies, Inc., a McGraw-Hill Education Company
+//  Copyright (c) 2014 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -40,6 +40,12 @@ DG.appController = SC.Object.create((function() // closure
   optionMenuPane: null,
 
   /**
+   * Options menu.
+   * @property {SC.MenuPane}
+   */
+  guideMenuPane: null,
+
+  /**
    * Initialization function.
    */
   init: function() {
@@ -52,7 +58,10 @@ DG.appController = SC.Object.create((function() // closure
               items: this.get('optionMenuItems'),
               layout: { width: 150 }
             });
-    
+    this.guideMenuPane = SC.MenuPane.create({
+              layout: { width: 250 }
+            });
+
     // Give the user a chance to confirm/cancel before closing, reloading,
     // or navigating away from the page. The sites listed below provide some
     // information on the 'beforeunload' event and its handling, but the upshot
@@ -118,6 +127,8 @@ DG.appController = SC.Object.create((function() // closure
       { localize: true, title: 'DG.AppController.optionMenuItems.releaseNotes', // "What's New?",
         target: this, action: 'showReleaseNotes' },
       { isSeparator: YES },
+      { localize: true, title: 'DG.AppController.optionMenuItems.configureGuide', // "Configure Guide..."
+        target: this, action: 'configureGuide' },
       { localize: true, title: 'DG.AppController.optionMenuItems.viewWebPage', // "View Web Page..."
         target: this, action: 'viewWebPage' }
       ];
@@ -431,7 +442,7 @@ DG.appController = SC.Object.create((function() // closure
 
     // Create a new empty document
     DG.currDocumentController().setDocument( DG.currDocumentController().createDocument());
-    
+
     // New documents generally start with a default game
     // TODO: Eliminate redundancy with DG.authorizationController....
     DG.gameSelectionController.setDefaultGame( iDefaultGameName);
@@ -565,6 +576,13 @@ DG.appController = SC.Object.create((function() // closure
      */
     viewWebPage: function() {
       DG.currDocumentController().viewWebPage();
+    },
+
+    /**
+      Pass responsibility to document controller
+     */
+    configureGuide: function() {
+      DG.currDocumentController().configureGuide();
     },
 
     /**
